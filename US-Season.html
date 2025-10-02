@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What US Season Are You Today? 🌸☀️🍂❄️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 1s ease;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d, #ff6b6b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .start-screen, .quiz-screen, .result-screen {
+            display: none;
+        }
+
+        .start-screen.active, .quiz-screen.active, .result-screen.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .season-icons {
+            text-align: center;
+            font-size: 4em;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .answers {
+            display: grid;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            border: 2px solid transparent;
+            text-align: left;
+        }
+
+        .answer-btn:hover {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .result-icon {
+            font-size: 8em;
+            text-align: center;
+            margin: 20px 0;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .result-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .result-description {
+            font-size: 1.2em;
+            text-align: center;
+            color: #666;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .season-spring { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%) !important; }
+        .season-summer { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important; }
+        .season-fall { background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%) !important; }
+        .season-winter { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%) !important; }
+
+        .floating-emoji {
+            position: fixed;
+            font-size: 2em;
+            animation: float 10s infinite ease-in-out;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .question-number {
+            text-align: center;
+            color: #999;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-emoji" style="left: 10%; animation-delay: 0s;">🌸</div>
+    <div class="floating-emoji" style="left: 30%; animation-delay: 2s;">☀️</div>
+    <div class="floating-emoji" style="left: 50%; animation-delay: 4s;">🍂</div>
+    <div class="floating-emoji" style="left: 70%; animation-delay: 6s;">❄️</div>
+    <div class="floating-emoji" style="left: 90%; animation-delay: 8s;">🌺</div>
+
+    <div class="container">
+        <!-- Start Screen -->
+        <div class="start-screen active">
+            <h1>What US Season Are You Today?</h1>
+            <div class="season-icons">🌸☀️🍂❄️</div>
+            <p style="text-align: center; font-size: 1.2em; color: #666; margin: 20px 0;">
+                Discover which season matches your current mood and vibe! 
+                Answer 7 fun questions about how you're feeling today.
+            </p>
+            <button onclick="startQuiz()">Start the Quiz! ✨</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="question-number" id="questionNumber"></div>
+            <div class="question" id="questionContainer">
+                <!-- Questions will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="result-screen">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-title" id="resultTitle"></div>
+            <div class="result-description" id="resultDescription"></div>
+            <button onclick="restartQuiz()">Take Quiz Again 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "How's your energy level today? ⚡",
+                answers: [
+                    { text: "🌱 Fresh and ready to grow! Everything feels new!", value: "spring" },
+                    { text: "☀️ Blazing hot! I could run a marathon!", value: "summer" },
+                    { text: "🍃 Mellow and steady, like a gentle breeze", value: "fall" },
+                    { text: "❄️ Quiet and conserved, saving it for what matters", value: "winter" }
+                ]
+            },
+            {
+                question: "What sounds most appealing right now? 🎯",
+                answers: [
+                    { text: "🌷 Starting a new project or hobby", value: "spring" },
+                    { text: "🏖️ An adventure or social gathering", value: "summer" },
+                    { text: "☕ A cozy chat with an old friend", value: "fall" },
+                    { text: "📚 Some quiet time alone to reflect", value: "winter" }
+                ]
+            },
+            {
+                question: "Pick your ideal comfort food for today: 🍽️",
+                answers: [
+                    { text: "🥗 Fresh salad with colorful veggies", value: "spring" },
+                    { text: "🍦 Ice cream or something cold and sweet", value: "summer" },
+                    { text: "🥧 Warm apple pie with cinnamon", value: "fall" },
+                    { text: "🍲 Hot soup or cocoa by the fireplace", value: "winter" }
+                ]
+            },
+            {
+                question: "How are you feeling emotionally? 💭",
+                answers: [
+                    { text: "🦋 Hopeful and excited about possibilities", value: "spring" },
+                    { text: "🎉 Joyful and carefree", value: "summer" },
+                    { text: "🍁 Nostalgic and grateful", value: "fall" },
+                    { text: "🕯️ Peaceful and introspective", value: "winter" }
+                ]
+            },
+            {
+                question: "Your ideal outfit today would be: 👕",
+                answers: [
+                    { text: "🌺 Light, colorful, and flowy", value: "spring" },
+                    { text: "👙 Minimal and breezy", value: "summer" },
+                    { text: "🧥 Layered and comfortable", value: "fall" },
+                    { text: "🧣 Cozy and bundled up", value: "winter" }
+                ]
+            },
+            {
+                question: "What color palette speaks to you today? 🎨",
+                answers: [
+                    { text: "🌸 Pastels - pink, lavender, mint green", value: "spring" },
+                    { text: "🌅 Bright - turquoise, coral, yellow", value: "summer" },
+                    { text: "🍂 Warm - orange, burgundy, gold", value: "fall" },
+                    { text: "❄️ Cool - silver, white, deep blue", value: "winter" }
+                ]
+            },
+            {
+                question: "Your ideal way to spend the evening: 🌙",
+                answers: [
+                    { text: "🌼 Taking a sunset walk and watching things bloom", value: "spring" },
+                    { text: "🎆 Staying out late with friends", value: "summer" },
+                    { text: "🕯️ Reading a good book with candles lit", value: "fall" },
+                    { text: "🔥 Early to bed under warm blankets", value: "winter" }
+                ]
+            }
+        ];
+
+        const seasonResults = {
+            spring: {
+                icon: "🌸",
+                title: "You're SPRING Today!",
+                description: "You're bursting with fresh energy and new beginnings! Like spring, you're full of hope, growth, and possibilities. Your mood is light, optimistic, and ready to bloom. You see potential everywhere and feel motivated to start something new. Today, you embody renewal and the sweet promise of what's to come!",
+                bgClass: "season-spring"
+            },
+            summer: {
+                icon: "☀️",
+                title: "You're SUMMER Today!",
+                description: "You're radiating warmth and vibrant energy! Like summer, you're at your peak - social, adventurous, and full of life. Your mood is bright, carefree, and ready for fun. You want to soak up every moment and share your sunshine with others. Today, you embody freedom and pure joy!",
+                bgClass: "season-summer"
+            },
+            fall: {
+                icon: "🍂",
+                title: "You're FALL Today!",
+                description: "You're in a cozy, reflective state of mind! Like autumn, you're feeling grateful, nostalgic, and content. Your mood is mellow, warm, and appreciative of life's simple pleasures. You're ready to slow down and savor the moment. Today, you embody wisdom and comfortable transitions!",
+                bgClass: "season-fall"
+            },
+            winter: {
+                icon: "❄️",
+                title: "You're WINTER Today!",
+                description: "You're in a peaceful, introspective mood! Like winter, you're calm, quiet, and deeply thoughtful. Your energy is focused inward, seeking rest and reflection. You appreciate stillness and the beauty of simplicity. Today, you embody serenity and the power of quiet contemplation!",
+                bgClass: "season-winter"
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = {
+            spring: 0,
+            summer: 0,
+            fall: 0,
+            winter: 0
+        };
+
+        function startQuiz() {
+            document.querySelector('.start-screen').classList.remove('active');
+            document.querySelector('.quiz-screen').classList.add('active');
+            currentQuestion = 0;
+            answers = { spring: 0, summer: 0, fall: 0, winter: 0 };
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            const progress = document.getElementById('progress');
+            const questionNumber = document.getElementById('questionNumber');
+            
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            progress.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            container.innerHTML = `
+                <h2>${question.question}</h2>
+                <div class="answers">
+                    ${question.answers.map((answer, index) => `
+                        <div class="answer-btn" onclick="selectAnswer('${answer.value}')">
+                            ${answer.text}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function selectAnswer(value) {
+            answers[value]++;
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.querySelector('.quiz-screen').classList.remove('active');
+            document.querySelector('.result-screen').classList.add('active');
+            
+            // Find the season with the most points
+            let maxSeason = 'spring';
+            let maxCount = 0;
+            
+            for (let season in answers) {
+                if (answers[season] > maxCount) {
+                    maxCount = answers[season];
+                    maxSeason = season;
+                }
+            }
+            
+            const result = seasonResults[maxSeason];
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultTitle').textContent = result.title;
+            document.getElementById('resultDescription').textContent = result.description;
+            document.body.className = result.bgClass;
+        }
+
+        function restartQuiz() {
+            document.querySelector('.result-screen').classList.remove('active');
+            document.querySelector('.start-screen').classList.add('active');
+            document.body.className = '';
+        }
+    </script>
+</body>
+</html>
